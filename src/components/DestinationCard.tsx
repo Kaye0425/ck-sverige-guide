@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Clock } from 'lucide-react';
+import { MapPin, Clock, Mic } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export interface Destination {
@@ -65,7 +65,10 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
           className="destination-card-image object-cover w-full h-52 hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
-          <h3 className="text-xl font-bold">{destination.name[language]}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-bold">{destination.name[language]}</h3>
+            <Mic className="h-4 w-4 text-white opacity-80 hover:opacity-100 cursor-pointer" title={`Pronounce ${destination.name[language]}`} />
+          </div>
         </div>
       </div>
       <div className="p-4">

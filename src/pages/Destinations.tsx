@@ -10,11 +10,27 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem, CommandList, CommandEmpty } from '@/components/ui/command';
 
+// Function to normalize text by removing accents and special characters
+const normalizeText = (text: string): string => {
+  return text.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[øø]/gi, 'o')
+    .replace(/[åå]/gi, 'a')
+    .replace(/[ääæ]/gi, 'a')
+    .replace(/[ööœ]/gi, 'o');
+};
+
 const Destinations = () => {
   const { language, t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [normalizedSearchTerm, setNormalizedSearchTerm] = useState('');
+  
+  // Update normalized search term when search term changes
+  useEffect(() => {
+    setNormalizedSearchTerm(normalizeText(searchTerm));
+  }, [searchTerm]);
   
   // All searchable terms for destinations in current language
   const allTerms = destinations.flatMap(destination => [
@@ -23,21 +39,29 @@ const Destinations = () => {
     destination.region[language].toLowerCase()
   ]);
 
-  // Filter destinations based on search term
-  const filteredDestinations = destinations.filter(destination => 
-    destination.name[language].toLowerCase().includes(searchTerm.toLowerCase()) ||
-    destination.location[language].toLowerCase().includes(searchTerm.toLowerCase()) ||
-    destination.region[language].toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Generate normalized terms for search
+  const normalizedTerms = allTerms.map(term => normalizeText(term));
+  
+  // Filter destinations based on normalized search term
+  const filteredDestinations = destinations.filter(destination => {
+    const normalizedName = normalizeText(destination.name[language]);
+    const normalizedLocation = normalizeText(destination.location[language]);
+    const normalizedRegion = normalizeText(destination.region[language]);
+    
+    return normalizedName.includes(normalizedSearchTerm) || 
+           normalizedLocation.includes(normalizedSearchTerm) || 
+           normalizedRegion.includes(normalizedSearchTerm);
+  });
 
   // Find suggestions for possible misspellings
   useEffect(() => {
-    if (searchTerm.length > 2 && filteredDestinations.length === 0) {
+    if (normalizedSearchTerm.length > 2 && filteredDestinations.length === 0) {
       // Simple suggestion algorithm - terms that include at least half of the search chars
-      const possibleMatches = allTerms.filter(term => {
-        const searchChars = searchTerm.toLowerCase().split('');
-        const matchCount = searchChars.filter(char => term.includes(char)).length;
-        return matchCount >= Math.floor(searchTerm.length / 2);
+      const searchChars = normalizedSearchTerm.split('');
+      const possibleMatches = allTerms.filter((term, index) => {
+        const normalizedTerm = normalizedTerms[index];
+        const matchCount = searchChars.filter(char => normalizedTerm.includes(char)).length;
+        return matchCount >= Math.floor(normalizedSearchTerm.length / 2);
       });
       
       // Take top 3 unique suggestions
@@ -47,7 +71,7 @@ const Destinations = () => {
     } else {
       setShowSuggestions(false);
     }
-  }, [searchTerm, language]);
+  }, [normalizedSearchTerm, language]);
 
   const handleSuggestionClick = (suggestion: string) => {
     setSearchTerm(suggestion);
