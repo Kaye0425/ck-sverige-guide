@@ -1,0 +1,69 @@
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { MapPin, Clock } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+export interface Destination {
+  id: string;
+  name: {
+    sv: string;
+    en: string;
+  };
+  location: {
+    sv: string;
+    en: string;
+  };
+  timeNeeded: {
+    hours: number;
+    days: number;
+  };
+  image: string;
+  region: {
+    sv: string;
+    en: string;
+  };
+}
+
+interface DestinationCardProps {
+  destination: Destination;
+}
+
+const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
+  const { language, t } = useLanguage();
+  
+  const formatTime = () => {
+    if (destination.timeNeeded.days > 0) {
+      return `${destination.timeNeeded.days} ${destination.timeNeeded.days === 1 ? t('destination.day') : t('destination.days')}`;
+    } else {
+      return `${destination.timeNeeded.hours} ${t('destination.hours')}`;
+    }
+  };
+
+  return (
+    <Link to={`/destination/${destination.id}`} className="destination-card block hover:scale-[1.02]">
+      <div className="relative">
+        <img
+          src={destination.image}
+          alt={destination.name[language]}
+          className="destination-card-image"
+        />
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
+          <h3 className="text-lg font-bold">{destination.name[language]}</h3>
+        </div>
+      </div>
+      <div className="p-4">
+        <div className="flex items-center text-sm text-muted-foreground mb-2">
+          <MapPin className="h-4 w-4 mr-1" />
+          <span>{destination.location[language]}</span>
+        </div>
+        <div className="flex items-center text-sm text-muted-foreground">
+          <Clock className="h-4 w-4 mr-1" />
+          <span>{formatTime()}</span>
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+export default DestinationCard;
