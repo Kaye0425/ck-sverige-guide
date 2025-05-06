@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
@@ -8,11 +8,40 @@ import { ArrowLeft, Clock, Euro, MapPin, ShoppingCart, Mic } from 'lucide-react'
 import { Button } from '@/components/ui/button';
 import destinations from '@/data/destinations';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+// Currency exchange rates (approximate)
+const exchangeRates = {
+  EUR: 1,
+  USD: 1.09,
+  GBP: 0.85,
+  JPY: 160.76,
+  SEK: 11.37,
+  CHF: 0.96,
+  INR: 90.29
+};
+
+// Currency symbols
+const currencySymbols = {
+  EUR: '€',
+  USD: '$',
+  GBP: '£',
+  JPY: '¥',
+  SEK: 'kr',
+  CHF: 'Fr',
+  INR: '₹'
+};
 
 const DestinationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { language, t } = useLanguage();
   const navigate = useNavigate();
+  const [selectedCurrency, setSelectedCurrency] = useState('EUR');
   
   const destination = destinations.find(d => d.id === id);
   
@@ -44,6 +73,34 @@ const DestinationDetail = () => {
     
     // Speak the destination name
     window.speechSynthesis.speak(utterance);
+  };
+
+  // Extract expense range from text (assumes format like "€50-100" or "€200")
+  const extractExpenseRange = (expenseText) => {
+    const matches = expenseText.match(/€(\d+)(?:-(\d+))?/);
+    if (!matches) return { min: 0, max: 0 };
+    
+    const min = parseInt(matches[1]);
+    const max = matches[2] ? parseInt(matches[2]) : min;
+    return { min, max };
+  };
+
+  // Convert expenses to selected currency
+  const convertExpense = (expenseText) => {
+    const { min, max } = extractExpenseRange(expenseText);
+    
+    if (min === 0 && max === 0) return expenseText; // Return original if no match
+    
+    const convertedMin = (min * exchangeRates[selectedCurrency] / exchangeRates.EUR).toFixed(0);
+    const convertedMax = (max * exchangeRates[selectedCurrency] / exchangeRates.EUR).toFixed(0);
+    
+    const symbol = currencySymbols[selectedCurrency];
+    
+    if (min === max) {
+      return `${symbol}${convertedMin}`;
+    } else {
+      return `${symbol}${convertedMin}-${convertedMax}`;
+    }
   };
   
   return (
@@ -157,11 +214,31 @@ const DestinationDetail = () => {
                         <Euro className="h-6 w-6 text-earth-forest" />
                       </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-muted-foreground">
-                        {t('destination.expenses')}
-                      </h4>
-                      <p className="text-lg font-medium">{destination.expenses[language]}</p>
+                    <div className="flex-grow">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium text-muted-foreground">
+                          {t('destination.expenses')}
+                        </h4>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              {selectedCurrency}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {Object.keys(exchangeRates).map((currency) => (
+                              <DropdownMenuItem
+                                key={currency}
+                                onClick={() => setSelectedCurrency(currency)}
+                                className="cursor-pointer"
+                              >
+                                {currency} ({currencySymbols[currency]})
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                      <p className="text-lg font-medium">{convertExpense(destination.expenses[language])}</p>
                     </div>
                   </div>
                   
