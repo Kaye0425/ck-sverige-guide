@@ -57,15 +57,15 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
   };
 
   return (
-    <Link to={`/destination/${destination.id}`} className="destination-card block hover:scale-[1.02]">
-      <div className="relative">
+    <Link to={`/destination/${destination.id}`} className="destination-card block hover:scale-[1.02] transition-all">
+      <div className="relative rounded-t-lg overflow-hidden">
         <img
           src={destination.image}
           alt={destination.name[language]}
-          className="destination-card-image"
+          className="destination-card-image object-cover w-full h-52 hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
-          <h3 className="text-lg font-bold">{destination.name[language]}</h3>
+          <h3 className="text-xl font-bold">{destination.name[language]}</h3>
         </div>
       </div>
       <div className="p-4">
