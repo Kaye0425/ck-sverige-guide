@@ -23,6 +23,22 @@ export interface Destination {
     sv: string;
     en: string;
   };
+  description: {
+    sv: string;
+    en: string;
+  };
+  expenses: {
+    sv: string;
+    en: string;
+  };
+  shopping: {
+    sv: string;
+    en: string;
+  };
+  whyVisit: {
+    sv: string;
+    en: string;
+  };
 }
 
 interface DestinationCardProps {
