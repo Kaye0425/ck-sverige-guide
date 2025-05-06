@@ -4,9 +4,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ArrowLeft, Clock, Euro, MapPin, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Clock, Euro, MapPin, ShoppingCart, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import destinations from '@/data/destinations';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const DestinationDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,6 +35,17 @@ const DestinationDetail = () => {
     }
   };
   
+  const pronounceName = () => {
+    const text = destination.name[language];
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Set language based on the current language
+    utterance.lang = language === 'sv' ? 'sv-SE' : 'en-US';
+    
+    // Speak the destination name
+    window.speechSynthesis.speak(utterance);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -48,9 +60,29 @@ const DestinationDetail = () => {
           />
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-white">
-            <h1 className="text-3xl md:text-5xl font-bold mb-2">
-              {destination.name[language]}
-            </h1>
+            <div className="flex items-center gap-2 mb-2">
+              <h1 className="text-3xl md:text-5xl font-bold">
+                {destination.name[language]}
+              </h1>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20" 
+                      onClick={pronounceName}
+                    >
+                      <Mic className="h-4 w-4 text-white" />
+                      <span className="sr-only">Pronounce {destination.name[language]}</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Pronounce {destination.name[language]}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <div className="flex items-center">
               <MapPin className="mr-2 h-5 w-5" />
               <span className="text-lg">{destination.location[language]}, {destination.region[language]}</span>

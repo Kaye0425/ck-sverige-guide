@@ -56,6 +56,20 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
     }
   };
 
+  const pronounceName = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const text = destination.name[language];
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Set language based on the current language
+    utterance.lang = language === 'sv' ? 'sv-SE' : 'en-US';
+    
+    // Speak the destination name
+    window.speechSynthesis.speak(utterance);
+  };
+
   return (
     <Link to={`/destination/${destination.id}`} className="destination-card block hover:scale-[1.02] transition-all">
       <div className="relative rounded-t-lg overflow-hidden">
@@ -71,6 +85,7 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
               <Mic 
                 className="h-4 w-4 text-white opacity-80 hover:opacity-100 cursor-pointer" 
                 aria-label={`Pronounce ${destination.name[language]}`}
+                onClick={pronounceName}
               />
               <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 whitespace-nowrap bg-black/80 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                 Pronounce {destination.name[language]}
