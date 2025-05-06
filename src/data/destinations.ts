@@ -23,7 +23,7 @@ const destinations: Destination[] = [
     },
     description: {
       sv: 'Gamla stan, Stockholms historiska centrum, är en av Europas bäst bevarade medeltida stadskärnor. Här kan du uppleva historisk charm med smala kullerstensgator, färgglada byggnader och Kungliga slottet.',
-      en: 'The Old Town, Stockholm's historic center, is one of Europe's best-preserved medieval city centers. Here you can experience historical charm with narrow cobblestone streets, colorful buildings, and the Royal Palace.',
+      en: "The Old Town, Stockholm's historic center, is one of Europe's best-preserved medieval city centers. Here you can experience historical charm with narrow cobblestone streets, colorful buildings, and the Royal Palace.",
     },
     expenses: {
       sv: '500-1000 SEK per person',
