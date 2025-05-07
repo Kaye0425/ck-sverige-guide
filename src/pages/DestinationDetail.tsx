@@ -78,34 +78,41 @@ const DestinationDetail = () => {
     window.speechSynthesis.speak(utterance);
   };
 
-  // Extract expense range from text (assumes format like "€50-100" or "€200")
+  // Extract expense range from text (assumes format like "€50-100" or "€200" or "50-100 kr" or "200 kr")
   const extractExpenseRange = (expenseText) => {
-    // Update regex to handle both EUR and SEK formats
+    // Updated regex to handle both EUR and SEK formats more accurately
     const euroMatches = expenseText.match(/€(\d+)(?:-(\d+))?/);
     const sekMatches = expenseText.match(/(\d+)(?:-(\d+))?\s*kr/);
     
     if (euroMatches) {
       const min = parseInt(euroMatches[1]);
       const max = euroMatches[2] ? parseInt(euroMatches[2]) : min;
-      return { min, max };
+      return { min, max, currency: 'EUR' };
     } else if (sekMatches) {
       const min = parseInt(sekMatches[1]);
       const max = sekMatches[2] ? parseInt(sekMatches[2]) : min;
-      return { min, max, isSEK: true };
+      return { min, max, currency: 'SEK' };
     }
     
-    return { min: 0, max: 0 };
+    return { min: 0, max: 0, currency: 'EUR' };
   };
 
   // Convert expenses to selected currency
   const convertExpense = (expenseText) => {
-    const { min, max, isSEK } = extractExpenseRange(expenseText);
+    const { min, max, currency } = extractExpenseRange(expenseText);
     
     if (min === 0 && max === 0) return expenseText; // Return original if no match
     
-    // Convert from SEK to EUR first if the original is in SEK
-    const minEUR = isSEK ? (min / exchangeRates.SEK) : min;
-    const maxEUR = isSEK ? (max / exchangeRates.SEK) : max;
+    // First convert to EUR as base currency
+    let minEUR, maxEUR;
+    
+    if (currency === 'SEK') {
+      minEUR = min / exchangeRates.SEK;
+      maxEUR = max / exchangeRates.SEK;
+    } else {
+      minEUR = min;
+      maxEUR = max;
+    }
     
     // Then convert from EUR to the target currency
     const convertedMin = Math.round(minEUR * exchangeRates[selectedCurrency]);
@@ -113,7 +120,7 @@ const DestinationDetail = () => {
     
     const symbol = currencySymbols[selectedCurrency];
     
-    // Update to match the format of the current currency (symbol position)
+    // Format according to currency convention
     if (selectedCurrency === 'SEK' || selectedCurrency === 'DKK' || selectedCurrency === 'NOK') {
       return min === max ? `${convertedMin} ${symbol}` : `${convertedMin}-${convertedMax} ${symbol}`;
     } else if (selectedCurrency === 'JPY') {
@@ -246,7 +253,7 @@ const DestinationDetail = () => {
                     </div>
                   </div>
                   
-                  {/* Expenses */}
+                  {/* Expenses with Currency Selection */}
                   <div className="flex">
                     <div className="flex-shrink-0 mr-4">
                       <div className="h-12 w-12 rounded-full bg-earth-moss/20 flex items-center justify-center">
@@ -260,7 +267,7 @@ const DestinationDetail = () => {
                         </h4>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" className="bg-white hover:bg-gray-100">
                               {selectedCurrency}
                             </Button>
                           </DropdownMenuTrigger>
@@ -269,7 +276,7 @@ const DestinationDetail = () => {
                               <DropdownMenuItem
                                 key={currency}
                                 onClick={() => handleCurrencyChange(currency)}
-                                className="cursor-pointer"
+                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
                               >
                                 {currency} ({currencySymbols[currency]})
                               </DropdownMenuItem>
@@ -277,7 +284,9 @@ const DestinationDetail = () => {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <p className="text-lg font-medium mt-1">{convertExpense(destination.expenses[language])}</p>
+                      <p className="text-lg font-medium mt-1">
+                        {convertExpense(destination.expenses[language])}
+                      </p>
                     </div>
                   </div>
                   
