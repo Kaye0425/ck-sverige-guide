@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -14,16 +13,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import WorldTimeClock from '@/components/WorldTimeClock';
 
-// Currency exchange rates (approximate)
+// Currency exchange rates (updated May 2025)
 const exchangeRates = {
   EUR: 1,
-  USD: 1.09,
-  GBP: 0.85,
-  JPY: 160.76,
-  SEK: 11.37,
-  CHF: 0.96,
-  INR: 90.29
+  USD: 1.08,
+  GBP: 0.86,
+  JPY: 164.50,
+  SEK: 11.25,
+  CHF: 0.97,
+  INR: 90.15
 };
 
 // Currency symbols
@@ -42,6 +42,7 @@ const DestinationDetail = () => {
   const { language, t } = useLanguage();
   const navigate = useNavigate();
   const [selectedCurrency, setSelectedCurrency] = useState('EUR');
+  const [showWorldClock, setShowWorldClock] = useState(false);
   
   const destination = destinations.find(d => d.id === id);
   
@@ -104,7 +105,21 @@ const DestinationDetail = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      <div 
+        className="fixed left-0 top-0 bottom-0 z-10"
+        onMouseEnter={() => setShowWorldClock(true)}
+        onMouseLeave={() => setShowWorldClock(false)}
+      >
+        <div className={`transition-all duration-300 ${showWorldClock ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'}`}>
+          <WorldTimeClock />
+        </div>
+        {/* Hover tab for the clock */}
+        <div className="absolute top-1/2 -translate-y-1/2 left-0 bg-earth-forest text-white p-1 rounded-r-md cursor-pointer shadow-md">
+          <Clock size={18} />
+        </div>
+      </div>
+
       <Header />
       
       <main className="flex-grow">
