@@ -78,6 +78,19 @@ const DestinationDetail = () => {
     window.speechSynthesis.speak(utterance);
   };
 
+  // Pronounce location
+  const pronounceLocation = () => {
+    const text = `${destination.location[language]}, ${destination.region[language]}`;
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Set language based on the current language
+    utterance.lang = language === 'sv' ? 'sv-SE' : 'en-US';
+    
+    // Speak the location
+    window.speechSynthesis.speak(utterance);
+    toast.info(language === 'sv' ? 'Spelar upp plats' : 'Playing location');
+  };
+
   // Extract expense range from text (assumes format like "€50-100" or "€200" or "50-100 kr" or "200 kr")
   const extractExpenseRange = (expenseText) => {
     // Updated regex to handle both EUR and SEK formats more accurately
@@ -189,6 +202,24 @@ const DestinationDetail = () => {
             <div className="flex items-center">
               <MapPin className="mr-2 h-5 w-5" />
               <span className="text-lg">{destination.location[language]}, {destination.region[language]}</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 ml-2" 
+                      onClick={pronounceLocation}
+                    >
+                      <Mic className="h-4 w-4 text-white" />
+                      <span className="sr-only">Pronounce location</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Pronounce location</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
         </div>
@@ -284,7 +315,7 @@ const DestinationDetail = () => {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <p className="text-lg font-medium mt-1">
+                      <p className="text-lg font-medium mt-1" key={selectedCurrency}>
                         {convertExpense(destination.expenses[language])}
                       </p>
                     </div>
