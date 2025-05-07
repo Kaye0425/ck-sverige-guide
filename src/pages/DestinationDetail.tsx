@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -93,26 +92,44 @@ const DestinationDetail = () => {
 
   // Extract expense range from text (assumes format like "€50-100" or "€200" or "50-100 kr" or "200 kr")
   const extractExpenseRange = (expenseText) => {
-    // Updated regex to handle both EUR and SEK formats more accurately
+    // Check for Swedish krona format (e.g., "1500-2500 SEK per person/dag")
+    const sekFullMatch = expenseText.match(/(\d+)(?:-(\d+))?\s*(?:SEK|kr)\s+(.+)/i);
+    if (sekFullMatch) {
+      const min = parseInt(sekFullMatch[1]);
+      const max = sekFullMatch[2] ? parseInt(sekFullMatch[2]) : min;
+      const suffix = sekFullMatch[3] || ''; // Captures "per person/dag" or similar
+      return { min, max, suffix, currency: 'SEK' };
+    }
+    
+    // Check for Euro format with suffix (e.g., "€50-100 per day")
+    const euroFullMatch = expenseText.match(/€(\d+)(?:-(\d+))?\s+(.+)/);
+    if (euroFullMatch) {
+      const min = parseInt(euroFullMatch[1]);
+      const max = euroFullMatch[2] ? parseInt(euroFullMatch[2]) : min;
+      const suffix = euroFullMatch[3] || '';
+      return { min, max, suffix, currency: 'EUR' };
+    }
+    
+    // Standard formats without suffix
     const euroMatches = expenseText.match(/€(\d+)(?:-(\d+))?/);
-    const sekMatches = expenseText.match(/(\d+)(?:-(\d+))?\s*kr/);
+    const sekMatches = expenseText.match(/(\d+)(?:-(\d+))?\s*kr/i);
     
     if (euroMatches) {
       const min = parseInt(euroMatches[1]);
       const max = euroMatches[2] ? parseInt(euroMatches[2]) : min;
-      return { min, max, currency: 'EUR' };
+      return { min, max, suffix: '', currency: 'EUR' };
     } else if (sekMatches) {
       const min = parseInt(sekMatches[1]);
       const max = sekMatches[2] ? parseInt(sekMatches[2]) : min;
-      return { min, max, currency: 'SEK' };
+      return { min, max, suffix: '', currency: 'SEK' };
     }
     
-    return { min: 0, max: 0, currency: 'EUR' };
+    return { min: 0, max: 0, suffix: '', currency: 'EUR' };
   };
 
   // Convert expenses to selected currency
   const convertExpense = (expenseText) => {
-    const { min, max, currency } = extractExpenseRange(expenseText);
+    const { min, max, suffix, currency } = extractExpenseRange(expenseText);
     
     if (min === 0 && max === 0) return expenseText; // Return original if no match
     
@@ -128,18 +145,24 @@ const DestinationDetail = () => {
     }
     
     // Then convert from EUR to the target currency
-    const convertedMin = Math.round(minEUR * exchangeRates[selectedCurrency]);
-    const convertedMax = Math.round(maxEUR * exchangeRates[selectedCurrency]);
+    const convertedMin = (minEUR * exchangeRates[selectedCurrency]).toFixed(2);
+    const convertedMax = (maxEUR * exchangeRates[selectedCurrency]).toFixed(2);
     
     const symbol = currencySymbols[selectedCurrency];
     
-    // Format according to currency convention
+    // Format according to currency convention and include the suffix
     if (selectedCurrency === 'SEK' || selectedCurrency === 'DKK' || selectedCurrency === 'NOK') {
-      return min === max ? `${convertedMin} ${symbol}` : `${convertedMin}-${convertedMax} ${symbol}`;
+      return min === max 
+        ? `${convertedMin} ${symbol} ${suffix}`.trim() 
+        : `${convertedMin}-${convertedMax} ${symbol} ${suffix}`.trim();
     } else if (selectedCurrency === 'JPY') {
-      return min === max ? `${symbol}${convertedMin}` : `${symbol}${convertedMin}-${convertedMax}`;
+      return min === max 
+        ? `${symbol}${convertedMin} ${suffix}`.trim() 
+        : `${symbol}${convertedMin}-${convertedMax} ${suffix}`.trim();
     } else {
-      return min === max ? `${symbol}${convertedMin}` : `${symbol}${convertedMin}-${convertedMax}`;
+      return min === max 
+        ? `${symbol}${convertedMin} ${suffix}`.trim() 
+        : `${symbol}${convertedMin}-${convertedMax} ${suffix}`.trim();
     }
   };
   
