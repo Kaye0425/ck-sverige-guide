@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -14,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import WorldTimeClock from '@/components/WorldTimeClock';
+import { toast } from 'sonner';
 
 // Currency exchange rates (updated May 2025)
 const exchangeRates = {
@@ -78,44 +80,66 @@ const DestinationDetail = () => {
 
   // Extract expense range from text (assumes format like "€50-100" or "€200")
   const extractExpenseRange = (expenseText) => {
-    const matches = expenseText.match(/€(\d+)(?:-(\d+))?/);
-    if (!matches) return { min: 0, max: 0 };
+    // Update regex to handle both EUR and SEK formats
+    const euroMatches = expenseText.match(/€(\d+)(?:-(\d+))?/);
+    const sekMatches = expenseText.match(/(\d+)(?:-(\d+))?\s*kr/);
     
-    const min = parseInt(matches[1]);
-    const max = matches[2] ? parseInt(matches[2]) : min;
-    return { min, max };
+    if (euroMatches) {
+      const min = parseInt(euroMatches[1]);
+      const max = euroMatches[2] ? parseInt(euroMatches[2]) : min;
+      return { min, max };
+    } else if (sekMatches) {
+      const min = parseInt(sekMatches[1]);
+      const max = sekMatches[2] ? parseInt(sekMatches[2]) : min;
+      return { min, max, isSEK: true };
+    }
+    
+    return { min: 0, max: 0 };
   };
 
   // Convert expenses to selected currency
   const convertExpense = (expenseText) => {
-    const { min, max } = extractExpenseRange(expenseText);
+    const { min, max, isSEK } = extractExpenseRange(expenseText);
     
     if (min === 0 && max === 0) return expenseText; // Return original if no match
     
-    const convertedMin = (min * exchangeRates[selectedCurrency] / exchangeRates.EUR).toFixed(0);
-    const convertedMax = (max * exchangeRates[selectedCurrency] / exchangeRates.EUR).toFixed(0);
+    // Convert from SEK to EUR first if the original is in SEK
+    const minEUR = isSEK ? (min / exchangeRates.SEK) : min;
+    const maxEUR = isSEK ? (max / exchangeRates.SEK) : max;
+    
+    // Then convert from EUR to the target currency
+    const convertedMin = Math.round(minEUR * exchangeRates[selectedCurrency]);
+    const convertedMax = Math.round(maxEUR * exchangeRates[selectedCurrency]);
     
     const symbol = currencySymbols[selectedCurrency];
     
-    if (min === max) {
-      return `${symbol}${convertedMin}`;
+    // Update to match the format of the current currency (symbol position)
+    if (selectedCurrency === 'SEK' || selectedCurrency === 'DKK' || selectedCurrency === 'NOK') {
+      return min === max ? `${convertedMin} ${symbol}` : `${convertedMin}-${convertedMax} ${symbol}`;
+    } else if (selectedCurrency === 'JPY') {
+      return min === max ? `${symbol}${convertedMin}` : `${symbol}${convertedMin}-${convertedMax}`;
     } else {
-      return `${symbol}${convertedMin}-${convertedMax}`;
+      return min === max ? `${symbol}${convertedMin}` : `${symbol}${convertedMin}-${convertedMax}`;
     }
+  };
+  
+  const handleCurrencyChange = (currency) => {
+    setSelectedCurrency(currency);
+    toast.success(`Currency changed to ${currency}`);
   };
   
   return (
     <div className="min-h-screen flex flex-col relative">
       <div 
-        className="fixed left-0 top-0 bottom-0 z-10"
+        className="fixed left-0 top-0 bottom-0 z-50"
         onMouseEnter={() => setShowWorldClock(true)}
         onMouseLeave={() => setShowWorldClock(false)}
       >
-        <div className={`transition-all duration-300 ${showWorldClock ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'}`}>
+        <div className={`transition-all duration-300 h-full ${showWorldClock ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'}`}>
           <WorldTimeClock />
         </div>
         {/* Hover tab for the clock */}
-        <div className="absolute top-1/2 -translate-y-1/2 left-0 bg-earth-forest text-white p-1 rounded-r-md cursor-pointer shadow-md">
+        <div className="absolute top-1/2 -translate-y-1/2 left-0 bg-earth-forest text-white p-2 rounded-r-md cursor-pointer shadow-md">
           <Clock size={18} />
         </div>
       </div>
@@ -240,11 +264,11 @@ const DestinationDetail = () => {
                               {selectedCurrency}
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+                          <DropdownMenuContent align="end" className="bg-white dark:bg-slate-800 border">
                             {Object.keys(exchangeRates).map((currency) => (
                               <DropdownMenuItem
                                 key={currency}
-                                onClick={() => setSelectedCurrency(currency)}
+                                onClick={() => handleCurrencyChange(currency)}
                                 className="cursor-pointer"
                               >
                                 {currency} ({currencySymbols[currency]})
@@ -253,7 +277,7 @@ const DestinationDetail = () => {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                      <p className="text-lg font-medium">{convertExpense(destination.expenses[language])}</p>
+                      <p className="text-lg font-medium mt-1">{convertExpense(destination.expenses[language])}</p>
                     </div>
                   </div>
                   

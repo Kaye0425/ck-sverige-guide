@@ -40,8 +40,8 @@ const WorldTimeClock = () => {
   };
 
   return (
-    <div className="w-64 bg-white dark:bg-card shadow-lg h-full overflow-auto py-4">
-      <div className="px-4 pb-3 mb-3 border-b">
+    <div className="w-64 bg-white dark:bg-slate-900 shadow-lg h-full overflow-auto py-4 border-r border-slate-200 dark:border-slate-700">
+      <div className="px-4 pb-3 mb-3 border-b border-slate-200 dark:border-slate-700">
         <h2 className="text-xl font-bold text-earth-forest flex items-center">
           <Clock className="mr-2" size={20} />
           World Clock
@@ -51,7 +51,7 @@ const WorldTimeClock = () => {
         {timeZones.map((zone) => (
           <div 
             key={zone.name} 
-            className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100"
+            className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             <div className="flex justify-between items-center">
               <div>
