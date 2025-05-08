@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, MinimizeIcon, MessageSquare, Mic, Hotel, Phone } from 'lucide-react';
+import { Send, X, MinimizeIcon, MessageSquare, Mic, Hotel, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -75,23 +75,26 @@ export const ChatBot = () => {
   };
 
   const contactRealAgent = () => {
-    // Show notification that an agent has been contacted
-    toast("Contacting an agent at +63 9946305487...", {
-      description: "An agent will get back to you shortly.",
+    // Changed to use email instead of phone number
+    const agentEmail = "khayevillafuerte@gmail.com";
+    
+    // Show notification that an email has been sent to an agent
+    toast("Contacting an agent via email...", {
+      description: "An agent will contact you at their earliest convenience.",
       duration: 5000,
     });
     
-    // In a real app, this would make an API call to notify an agent
+    // In a real app, this would make an API call to send an email
     const messageToSend = `Customer requesting assistance on Sverige Guide website.`;
     
     // For demonstration, show the message details that would be sent
     console.log("Sending message to agent:", messageToSend);
-    console.log("Phone number: +63 9946305487");
+    console.log("Agent email:", agentEmail);
     
     // Add confirmation message in chat
     const botMessage: Message = {
       id: Date.now().toString(),
-      content: "I've notified our travel specialist. They'll contact you shortly. In the meantime, is there anything else I can help you with?",
+      content: "I've notified our travel specialist via email. They'll contact you shortly. In the meantime, is there anything else I can help you with?",
       sender: 'bot',
       timestamp: new Date(),
     };
@@ -112,7 +115,7 @@ export const ChatBot = () => {
         lowerCaseInput.includes('speak with agent')) {
       
       setTimeout(contactRealAgent, 500);
-      return "I understand you'd like to speak with a real person. I'm connecting you with one of our travel specialists at +63 9946305487 now.";
+      return "I understand you'd like to speak with a real person. I'm emailing one of our travel specialists now.";
     }
     
     // Check for estimation questions
@@ -312,9 +315,9 @@ export const ChatBot = () => {
               type="button"
               onClick={contactRealAgent}
               className="bg-red-500 hover:bg-red-600"
-              title="Talk to a real agent"
+              title="Contact an agent via email"
             >
-              <Phone className="h-4 w-4" />
+              <Mail className="h-4 w-4" />
             </Button>
           </div>
         </div>
