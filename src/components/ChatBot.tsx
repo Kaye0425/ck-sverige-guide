@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, MinimizeIcon, MessageSquare, Mic, Hotel, Mail } from 'lucide-react';
+import { Send, X, MinimizeIcon, MessageSquare, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { toast } from '@/components/ui/sonner';
-import emailjs from 'emailjs-com';
 
 type Message = {
   id: string;
@@ -110,20 +109,6 @@ export const ChatBot = () => {
       // Open mailto link in a new tab
       window.open(`mailto:${agentEmail}?subject=${subject}&body=${body}`, '_blank');
       
-      // In a real implementation with EmailJS properly set up, we would use this:
-      /*
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          to_email: agentEmail,
-          subject: "Customer Assistance Request - Sverige Guide",
-          message: `A customer is requesting assistance on the Sverige Guide website.\n\nChat History:\n${chatHistory}`,
-        },
-        EMAILJS_USER_ID
-      );
-      */
-      
       // Log confirmation for debugging
       console.log("Opening email client to contact agent:", agentEmail);
       console.log("Email subject:", "Customer Assistance Request - Sverige Guide");
@@ -178,52 +163,121 @@ export const ChatBot = () => {
       return "I understand you'd like to speak with a real person. I'm opening your email client so you can directly contact our travel specialist.";
     }
     
-    // Check for estimation questions
+    // Improved estimation logic - prioritize this check to make sure it captures estimation requests
     if (lowerCaseInput.includes('estimation') || lowerCaseInput.includes('estimate') || 
-        lowerCaseInput.includes('cost') || lowerCaseInput.includes('price')) {
+        lowerCaseInput.includes('cost') || lowerCaseInput.includes('price') || 
+        lowerCaseInput.includes('budget') || lowerCaseInput.includes('how much') ||
+        (lowerCaseInput.includes('people') && (lowerCaseInput.includes('month') || lowerCaseInput.includes('week') || lowerCaseInput.includes('day')))) {
       
       // Parse the query for people information
+      const peopleMatch = userInput.match(/(\d+)\s*people/i);
       const adultsMatch = userInput.match(/(\d+)\s*adults?/i);
       const kidsMatch = userInput.match(/(\d+)\s*kids?/i);
       const elderlyMatch = userInput.match(/(\d+)\s*elderly/i);
       
-      const adults = adultsMatch ? parseInt(adultsMatch[1]) : 0;
-      const kids = kidsMatch ? parseInt(kidsMatch[1]) : 0;
-      const elderly = elderlyMatch ? parseInt(elderlyMatch[1]) : 0;
+      // Default values
+      let totalPeople = 0;
+      let adults = adultsMatch ? parseInt(adultsMatch[1]) : 0;
+      let kids = kidsMatch ? parseInt(kidsMatch[1]) : 0;
+      let elderly = elderlyMatch ? parseInt(elderlyMatch[1]) : 0;
+      
+      // If total people is mentioned but not broken down
+      if (peopleMatch) {
+        totalPeople = parseInt(peopleMatch[1]);
+        // If no breakdown is provided, assume all adults
+        if (adults === 0 && kids === 0 && elderly === 0) {
+          adults = totalPeople;
+        }
+      } else {
+        totalPeople = adults + kids + elderly;
+      }
+      
+      // If still no people found, assume at least one adult
+      if (totalPeople === 0) {
+        adults = 1;
+        totalPeople = 1;
+      }
       
       // Parse duration
+      const monthMatch = userInput.match(/(\d+)\s*months?/i);
       const weekMatch = userInput.match(/(\d+)\s*weeks?/i);
       const dayMatch = userInput.match(/(\d+)\s*days?/i);
       
+      const months = monthMatch ? parseInt(monthMatch[1]) : 0;
       const weeks = weekMatch ? parseInt(weekMatch[1]) : 0;
       const days = dayMatch ? parseInt(dayMatch[1]) : 0;
+      
+      // Calculate total days
+      let totalDays = (months * 30) + (weeks * 7) + days;
+      
+      // If no duration mentioned, assume one week
+      if (totalDays === 0) {
+        totalDays = 7;
+      }
       
       // Parse location
       let location = 'Sweden';
       if (lowerCaseInput.includes('norrland')) location = 'Norrland';
       else if (lowerCaseInput.includes('svealand')) location = 'Svealand';
       else if (lowerCaseInput.includes('gotaland') || lowerCaseInput.includes('götaland')) location = 'Götaland';
+      else if (lowerCaseInput.includes('stockholm')) location = 'Stockholm';
+      else if (lowerCaseInput.includes('gothenburg')) location = 'Gothenburg';
+      else if (lowerCaseInput.includes('malmö') || lowerCaseInput.includes('malmo')) location = 'Malmö';
       
       // Calculate estimate
-      const totalPeople = adults + kids + elderly;
-      const totalDays = (weeks * 7) + days;
+      // Base rates per person per day (in SEK)
+      const adultRate = 2000;
+      const kidRate = 1000;
+      const elderlyRate = 1500;
       
-      if (totalPeople > 0 && totalDays > 0) {
-        // Base rates per person per day (in SEK)
-        const adultRate = 2000;
-        const kidRate = 1000;
-        const elderlyRate = 1500;
-        
-        // Location modifier
-        let locationModifier = 1;
-        if (location === 'Norrland') locationModifier = 1.2;
-        else if (location === 'Svealand') locationModifier = 1.1;
-        
-        // Calculate total
-        const totalCost = ((adults * adultRate) + (kids * kidRate) + (elderly * elderlyRate)) * totalDays * locationModifier;
-        
-        return `For ${totalPeople} people (${adults} adults, ${kids} kids, ${elderly} elderly) staying in ${location} for ${totalDays} days, I estimate costs around ${totalCost.toLocaleString()} SEK. This includes accommodation, food, and some activities.\n\nWould you like me to suggest some hotels for your stay in ${location}? I can show you options for different budgets.`;
+      // Location modifier
+      let locationModifier = 1;
+      if (location === 'Norrland') locationModifier = 1.2;
+      else if (location === 'Svealand') locationModifier = 1.1;
+      else if (location === 'Stockholm') locationModifier = 1.3;
+      
+      // Calculate total
+      const totalCost = ((adults * adultRate) + (kids * kidRate) + (elderly * elderlyRate)) * totalDays * locationModifier;
+      
+      // Format the response
+      let response = `Based on your request, I estimate that for `;
+      
+      // Format people information
+      if (totalPeople === 1) {
+        response += `1 person `;
+      } else {
+        response += `${totalPeople} people `;
+        if (adults > 0) response += `(${adults} adults${kids > 0 || elderly > 0 ? ', ' : ''}`; 
+        if (kids > 0) response += `${kids} kids${elderly > 0 ? ', ' : ''}`; 
+        if (elderly > 0) response += `${elderly} elderly`;
+        if (adults > 0) response += `) `;
       }
+      
+      // Format duration
+      response += `staying in ${location} for `;
+      if (months > 0) {
+        response += `${months} month${months > 1 ? 's' : ''}`;
+        if (weeks > 0 || days > 0) response += ', ';
+      }
+      if (weeks > 0) {
+        response += `${weeks} week${weeks > 1 ? 's' : ''}`;
+        if (days > 0) response += ', ';
+      }
+      if (days > 0) {
+        response += `${days} day${days > 1 ? 's' : ''}`;
+      }
+      
+      response += `, the estimated cost would be around **${totalCost.toLocaleString()} SEK**.
+
+This estimate includes:
+- Accommodation: ~${Math.round(totalCost * 0.4).toLocaleString()} SEK
+- Food and dining: ~${Math.round(totalCost * 0.3).toLocaleString()} SEK
+- Activities and transportation: ~${Math.round(totalCost * 0.2).toLocaleString()} SEK
+- Miscellaneous expenses: ~${Math.round(totalCost * 0.1).toLocaleString()} SEK
+
+Would you like me to suggest some hotels for your stay in ${location}? I can show you options for different budgets.`;
+      
+      return response;
     }
     
     // Check for specific location inquiries
