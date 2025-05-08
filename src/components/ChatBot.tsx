@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, MinimizeIcon, MessageSquare, Mic } from 'lucide-react';
+import { Send, X, MinimizeIcon, MessageSquare, Mic, Hotel, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/sonner';
 
 type Message = {
   id: string;
@@ -27,7 +28,7 @@ export const ChatBot = () => {
   const [isTyping, setIsTyping] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -73,9 +74,46 @@ export const ChatBot = () => {
     }, 1500);
   };
 
+  const contactRealAgent = () => {
+    // Show notification that an agent has been contacted
+    toast("Contacting an agent at +63 9946305487...", {
+      description: "An agent will get back to you shortly.",
+      duration: 5000,
+    });
+    
+    // In a real app, this would make an API call to notify an agent
+    const messageToSend = `Customer requesting assistance on Sverige Guide website.`;
+    
+    // For demonstration, show the message details that would be sent
+    console.log("Sending message to agent:", messageToSend);
+    console.log("Phone number: +63 9946305487");
+    
+    // Add confirmation message in chat
+    const botMessage: Message = {
+      id: Date.now().toString(),
+      content: "I've notified our travel specialist. They'll contact you shortly. In the meantime, is there anything else I can help you with?",
+      sender: 'bot',
+      timestamp: new Date(),
+    };
+    
+    setMessages((prev) => [...prev, botMessage]);
+  };
+
   // Generate a response based on user input
   const generateBotResponse = (userInput: string): string => {
     const lowerCaseInput = userInput.toLowerCase();
+    
+    // Check for requests to speak with a real person
+    if (lowerCaseInput.includes('real person') || 
+        lowerCaseInput.includes('real agent') || 
+        lowerCaseInput.includes('speak to someone') ||
+        lowerCaseInput.includes('human') ||
+        lowerCaseInput.includes('talk to agent') ||
+        lowerCaseInput.includes('speak with agent')) {
+      
+      setTimeout(contactRealAgent, 500);
+      return "I understand you'd like to speak with a real person. I'm connecting you with one of our travel specialists at +63 9946305487 now.";
+    }
     
     // Check for estimation questions
     if (lowerCaseInput.includes('estimation') || lowerCaseInput.includes('estimate') || 
@@ -121,37 +159,58 @@ export const ChatBot = () => {
         // Calculate total
         const totalCost = ((adults * adultRate) + (kids * kidRate) + (elderly * elderlyRate)) * totalDays * locationModifier;
         
-        return `For ${totalPeople} people (${adults} adults, ${kids} kids, ${elderly} elderly) staying in ${location} for ${totalDays} days, I estimate costs around ${totalCost.toLocaleString()} SEK. This includes accommodation, food, and some activities.\n\nWould you like me to suggest some hotels for your stay?`;
+        return `For ${totalPeople} people (${adults} adults, ${kids} kids, ${elderly} elderly) staying in ${location} for ${totalDays} days, I estimate costs around ${totalCost.toLocaleString()} SEK. This includes accommodation, food, and some activities.\n\nWould you like me to suggest some hotels for your stay in ${location}? I can show you options for different budgets.`;
       }
     }
     
     // Check for specific location inquiries
     if (lowerCaseInput.includes('norrland') || lowerCaseInput.includes('northern')) {
-      return "Norrland is Sweden's northernmost region, known for the Northern Lights, vast wilderness, and winter activities. Popular destinations include Kiruna, Abisko National Park, and the Ice Hotel. Would you like specific recommendations for Norrland?";
+      return "Norrland is Sweden's northernmost region, known for the Northern Lights, vast wilderness, and winter activities. Popular destinations include Kiruna, Abisko National Park, and the Ice Hotel.\n\nWould you like specific recommendations for Norrland? I can suggest hotels, activities, or travel routes.";
     }
     
     // Check for hotel inquiries
     if (lowerCaseInput.includes('hotel') || lowerCaseInput.includes('stay') || lowerCaseInput.includes('accommodation')) {
-      return "I can suggest several accommodation options! Would you like luxury hotels, mid-range options, budget-friendly places, or perhaps cabins and unique stays?";
+      // If they've requested accommodations, provide specific hotel options with links
+      let hotelOptions = "Here are some accommodation options I can recommend:\n\n";
+      
+      if (lowerCaseInput.includes('luxury') || lowerCaseInput.includes('high end') || lowerCaseInput.includes('expensive')) {
+        hotelOptions += "**Luxury Options:**\n";
+        hotelOptions += "- [Grand Hôtel Stockholm](https://www.grandhotel.se/en/) - Historic 5-star hotel with waterfront views\n";
+        hotelOptions += "- [Hotel Diplomat](https://diplomathotel.com/en/) - Elegant Art Nouveau hotel in central Stockholm\n";
+        hotelOptions += "- [Arctic Bath](https://arcticbath.se/) - Floating hotel and spa in Lapland\n\n";
+      } else if (lowerCaseInput.includes('budget') || lowerCaseInput.includes('cheap') || lowerCaseInput.includes('affordable')) {
+        hotelOptions += "**Budget-Friendly Options:**\n";
+        hotelOptions += "- [STF Hostels](https://www.swedishtouristassociation.com/accommodation/) - Affordable hostels throughout Sweden\n";
+        hotelOptions += "- [Comfort Hotel](https://www.nordicchoicehotels.com/comfort/) - Good value chain hotels in city centers\n";
+        hotelOptions += "- [Ibis Stockholm](https://all.accor.com/hotel/9232/index.en.shtml) - Budget hotel with good location\n\n";
+      } else {
+        hotelOptions += "**Popular Mid-Range Options:**\n";
+        hotelOptions += "- [Scandic Hotels](https://www.scandichotels.com/) - Sweden's largest hotel chain with locations everywhere\n";
+        hotelOptions += "- [Elite Hotels](https://elite.se/en/) - Quality hotels in historic buildings\n";
+        hotelOptions += "- [Treehotel](https://www.treehotel.se/) - Unique treetop rooms in Lapland\n\n";
+      }
+      
+      hotelOptions += "Would you like me to filter these by a specific region or price range? Or would you prefer unique stays like cabins or treehouses?";
+      return hotelOptions;
     }
     
     // Check for food inquiries
     if (lowerCaseInput.includes('food') || lowerCaseInput.includes('eat') || lowerCaseInput.includes('restaurant')) {
-      return "Swedish cuisine offers many delights! You should try traditional dishes like köttbullar (meatballs), gravlax (cured salmon), and kanelbullar (cinnamon buns). Would you like restaurant recommendations for a specific area?";
+      return "Swedish cuisine offers many delights! You should try traditional dishes like köttbullar (meatballs), gravlax (cured salmon), and kanelbullar (cinnamon buns).\n\nPopular restaurants to check out:\n- [Oaxen Krog](https://oaxen.com/en/) in Stockholm (fine dining)\n- [Fäviken](https://favikenmagasinet.se/) in northern Sweden (award-winning)\n- [Kalf & Hansen](https://www.kalfochhansen.se/) for organic Swedish fast food\n\nWould you like restaurant recommendations for a specific area or budget?";
     }
     
     // Check for activity inquiries  
     if (lowerCaseInput.includes('activities') || lowerCaseInput.includes('things to do') || lowerCaseInput.includes('attractions')) {
-      return "Sweden offers many activities year-round! From hiking and kayaking in summer to skiing and Northern Lights tours in winter. Museum visits, historic sites, and outdoor adventures are popular. Which season are you planning to visit?";
+      return "Sweden offers many activities year-round!\n\n**Summer activities:**\n- Hiking in national parks like Abisko or Sarek\n- Kayaking through Stockholm's archipelago\n- Midnight sun experiences in the north\n- Visiting historic sites like Gamla Stan\n\n**Winter activities:**\n- Northern Lights tours\n- Dog sledding and snowmobiling\n- Skiing at resorts like Åre\n- The Ice Hotel in Jukkasjärvi\n\nCheck out the [Visit Sweden website](https://visitsweden.com/) for seasonal events.\n\nWhat season are you planning to visit?";
     }
     
     // Default responses to keep conversation going
     const defaultResponses = [
-      "That's interesting! Would you like to know more about specific destinations in Sweden?",
-      "I can help with that. Would you like information about travel costs, accommodations, or activities?",
-      "Great question! Is there a specific region of Sweden you're most interested in visiting?",
-      "I'd be happy to assist with your travel plans. Are you looking for family-friendly destinations or something else?",
-      "Sweden has so much to offer! Are you interested in nature experiences, cultural attractions, or city life?"
+      "That's interesting! Would you like to know more about specific destinations in Sweden? I can help with recommendations for Stockholm, Gothenburg, Malmö, or natural areas like Lapland.",
+      "I can help with that. Would you like information about travel costs, accommodations, or activities? I can provide estimates for different budgets and group sizes.",
+      "Great question! Is there a specific region of Sweden you're most interested in visiting? Each region has its own unique attractions and character.",
+      "I'd be happy to assist with your travel plans. Are you looking for family-friendly destinations or something else? Sweden has great options for all types of travelers.",
+      "Sweden has so much to offer! Are you interested in nature experiences, cultural attractions, or city life? I can tailor my recommendations to your interests."
     ];
     
     return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
@@ -248,6 +307,14 @@ export const ChatBot = () => {
               className="bg-earth-forest hover:bg-earth-moss"
             >
               <Send className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              onClick={contactRealAgent}
+              className="bg-red-500 hover:bg-red-600"
+              title="Talk to a real agent"
+            >
+              <Phone className="h-4 w-4" />
             </Button>
           </div>
         </div>
