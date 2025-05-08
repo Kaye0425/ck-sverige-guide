@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, MinimizeIcon, MessageSquare, Mic, Hotel, Phone, Mail } from 'lucide-react';
+import { Send, X, MinimizeIcon, MessageSquare, Mic, Hotel, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { toast } from '@/components/ui/sonner';
+import emailjs from 'emailjs-com';
 
 type Message = {
   id: string;
@@ -11,6 +12,11 @@ type Message = {
   sender: 'user' | 'bot';
   timestamp: Date;
 };
+
+// EmailJS configuration
+const EMAILJS_SERVICE_ID = "service_swedish_guide";
+const EMAILJS_TEMPLATE_ID = "template_swedish_guide";
+const EMAILJS_USER_ID = "YOUR_USER_ID"; // Replace with your actual EmailJS user ID in a production app
 
 const defaultGreeting = "Hi there! I'm your travel assistant for Sverige Guide. Ask me anything about travel costs, planning trips, or recommendations for Sweden!";
 
@@ -26,6 +32,7 @@ export const ChatBot = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { toast: uiToast } = useToast();
@@ -74,32 +81,85 @@ export const ChatBot = () => {
     }, 1500);
   };
 
-  const contactRealAgent = () => {
-    // Changed to use email instead of phone number
+  const contactRealAgent = async () => {
+    // Prevent multiple simultaneous email attempts
+    if (isSendingEmail) return;
+    setIsSendingEmail(true);
+    
+    // Prepare the message content - include chat history
+    const chatHistory = messages.map(msg => 
+      `${msg.sender.toUpperCase()}: ${msg.content}`
+    ).join('\n\n');
+    
     const agentEmail = "khayevillafuerte@gmail.com";
     
-    // Show notification that an email has been sent to an agent
+    // Show notification that we're attempting to send an email
     toast("Contacting an agent via email...", {
       description: "An agent will contact you at their earliest convenience.",
       duration: 5000,
     });
     
-    // In a real app, this would make an API call to send an email
-    const messageToSend = `Customer requesting assistance on Sverige Guide website.`;
-    
-    // For demonstration, show the message details that would be sent
-    console.log("Sending message to agent:", messageToSend);
-    console.log("Agent email:", agentEmail);
-    
-    // Add confirmation message in chat
-    const botMessage: Message = {
-      id: Date.now().toString(),
-      content: "I've notified our travel specialist via email. They'll contact you shortly. In the meantime, is there anything else I can help you with?",
-      sender: 'bot',
-      timestamp: new Date(),
-    };
-    
-    setMessages((prev) => [...prev, botMessage]);
+    try {
+      // For direct email without EmailJS setup, we'll use a mailto link as fallback
+      // This will open the user's email client with a pre-filled email
+      const subject = encodeURIComponent("Customer Assistance Request - Sverige Guide");
+      const body = encodeURIComponent(
+        `A customer is requesting assistance on the Sverige Guide website.\n\nChat History:\n${chatHistory}`
+      );
+      
+      // Open mailto link in a new tab
+      window.open(`mailto:${agentEmail}?subject=${subject}&body=${body}`, '_blank');
+      
+      // In a real implementation with EmailJS properly set up, we would use this:
+      /*
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          to_email: agentEmail,
+          subject: "Customer Assistance Request - Sverige Guide",
+          message: `A customer is requesting assistance on the Sverige Guide website.\n\nChat History:\n${chatHistory}`,
+        },
+        EMAILJS_USER_ID
+      );
+      */
+      
+      // Log confirmation for debugging
+      console.log("Opening email client to contact agent:", agentEmail);
+      console.log("Email subject:", "Customer Assistance Request - Sverige Guide");
+      console.log("Email body contains chat history with", messages.length, "messages");
+      
+      // Add confirmation message in chat
+      const botMessage: Message = {
+        id: Date.now().toString(),
+        content: "I've opened your email client so you can directly contact our travel specialist. You can modify the email before sending if you'd like to add more details. Is there anything else I can help with?",
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, botMessage]);
+      
+    } catch (error) {
+      console.error("Error sending email:", error);
+      
+      // Add error message in chat
+      const botMessage: Message = {
+        id: Date.now().toString(),
+        content: "I'm having trouble contacting our agent. Please email khayevillafuerte@gmail.com directly or try again later.",
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, botMessage]);
+      
+      // Show error notification
+      toast("Email error", {
+        description: "Could not send email to agent. Please try again or email directly.",
+        duration: 5000,
+      });
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   // Generate a response based on user input
@@ -115,7 +175,7 @@ export const ChatBot = () => {
         lowerCaseInput.includes('speak with agent')) {
       
       setTimeout(contactRealAgent, 500);
-      return "I understand you'd like to speak with a real person. I'm emailing one of our travel specialists now.";
+      return "I understand you'd like to speak with a real person. I'm opening your email client so you can directly contact our travel specialist.";
     }
     
     // Check for estimation questions
@@ -316,8 +376,9 @@ export const ChatBot = () => {
               onClick={contactRealAgent}
               className="bg-red-500 hover:bg-red-600"
               title="Contact an agent via email"
+              disabled={isSendingEmail}
             >
-              <Mail className="h-4 w-4" />
+              <Mail className={`h-4 w-4 ${isSendingEmail ? 'animate-pulse' : ''}`} />
             </Button>
           </div>
         </div>
