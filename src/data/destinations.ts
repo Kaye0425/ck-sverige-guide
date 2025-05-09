@@ -1,186 +1,93 @@
-import { Destination } from '@/components/DestinationCard';
 
-const destinations: Destination[] = [
+export const destinations = [
   {
-    id: 'gamla-stan',
-    name: {
-      sv: 'Gamla Stan',
-      en: 'Old Town',
-    },
-    location: {
-      sv: 'Stockholm',
-      en: 'Stockholm',
-    },
-    timeNeeded: {
-      hours: 4,
-      days: 0,
-    },
-    image: 'https://images.unsplash.com/photo-1526322024902-60ae8fc9557e?auto=format&fit=crop&w=800',
-    region: {
-      sv: 'Stockholms län',
-      en: 'Stockholm County',
-    },
-    description: {
-      sv: 'Gamla stan, Stockholms historiska centrum, är en av Europas bäst bevarade medeltida stadskärnor. Här kan du uppleva historisk charm med smala kullerstensgator, färgglada byggnader och Kungliga slottet.',
-      en: "The Old Town, Stockholm's historic center, is one of Europe's best-preserved medieval city centers. Here you can experience historical charm with narrow cobblestone streets, colorful buildings, and the Royal Palace.",
-    },
-    expenses: {
-      sv: '500-1000 SEK per person',
-      en: '500-1000 SEK per person',
-    },
-    shopping: {
-      sv: 'Souvenirer, konsthantverk, designobjekt, smycken, och traditionella svenska produkter. Butikerna i Gamla Stan erbjuder unika hantverk och lokala produkter.',
-      en: 'Souvenirs, handicrafts, design objects, jewelry, and traditional Swedish products. The shops in the Old Town offer unique crafts and local products.',
-    },
-    whyVisit: {
-      sv: 'Gamla Stan är själva hjärtat av Stockholm och ett levande museum. Här kan du uppleva äkta svensk historia, arkitektur och kultur samtidigt som du njuter av mysiga caféer och unika butiker.',
-      en: 'The Old Town is the very heart of Stockholm and a living museum. Here you can experience authentic Swedish history, architecture, and culture while enjoying cozy cafes and unique shops.',
-    },
+    id: 1,
+    name: "Stockholm",
+    region: "Svealand",
+    description: "The capital of Sweden, known for its beautiful archipelago, historic old town (Gamla Stan), and cultural attractions.",
+    imageUrl: "https://images.unsplash.com/photo-1601127607683-f5ed45128142?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
+    attractions: ["Vasa Museum", "Gamla Stan", "Skansen", "Royal Palace", "City Hall"],
+    bestTimeToVisit: "May to September",
   },
   {
-    id: 'abisko',
-    name: {
-      sv: 'Abisko Nationalpark',
-      en: 'Abisko National Park',
-    },
-    location: {
-      sv: 'Norrbottens län',
-      en: 'Norrbotten County',
-    },
-    timeNeeded: {
-      hours: 0,
-      days: 2,
-    },
-    image: 'https://images.unsplash.com/photo-1517299321609-52687d1bc55a?auto=format&fit=crop&w=800',
-    region: {
-      sv: 'Lappland',
-      en: 'Lapland',
-    },
-    description: {
-      sv: 'Abisko nationalpark är känd för sin oförstörda natur, vandringsleder och för att vara en av de bästa platserna i världen för att se norrsken. Parken erbjuder fantastiska upplevelser året runt.',
-      en: 'Abisko National Park is known for its pristine nature, hiking trails and for being one of the best places in the world to see the Northern Lights. The park offers amazing experiences all year round.',
-    },
-    expenses: {
-      sv: '1500-2500 SEK per person/dag',
-      en: '1500-2500 SEK per person/day',
-    },
-    shopping: {
-      sv: 'Samiskt hantverk (duodji), överlevnadsutrustning, souvenirer med norrskensmotiv och lokala livsmedel som hjortronprodukter och renkött.',
-      en: 'Sami crafts (duodji), survival equipment, northern lights-themed souvenirs, and local foods like cloudberry products and reindeer meat.',
-    },
-    whyVisit: {
-      sv: 'Abisko erbjuder en av världens bästa chanser att uppleva det magiska norrskenet samt en unik arktisk vildmark. Den hundraåriga nationalparken ger dig möjlighet att uppleva orörd natur och spektakulära utsikter över fjäll och sjöar.',
-      en: 'Abisko offers one of the world\'s best chances to experience the magical Northern Lights and a unique Arctic wilderness. The hundred-year-old national park gives you the opportunity to experience untouched nature and spectacular views of mountains and lakes.',
-    },
+    id: 2,
+    name: "Gothenburg",
+    region: "Götaland",
+    description: "Sweden's second-largest city with a vibrant cultural scene, beautiful parks, and a charming canal system.",
+    imageUrl: "https://images.unsplash.com/photo-1599931246789-ea22d2ffb8d4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    attractions: ["Liseberg Amusement Park", "Gothenburg Archipelago", "Universeum", "Botanical Garden", "Haga District"],
+    bestTimeToVisit: "June to August",
   },
   {
-    id: 'gotland',
-    name: {
-      sv: 'Visby',
-      en: 'Visby',
-    },
-    location: {
-      sv: 'Gotland',
-      en: 'Gotland',
-    },
-    timeNeeded: {
-      hours: 0,
-      days: 3,
-    },
-    image: 'https://images.unsplash.com/photo-1592248939070-2f13d17df027?auto=format&fit=crop&w=800',
-    region: {
-      sv: 'Gotlands län',
-      en: 'Gotland County',
-    },
-    description: {
-      sv: 'Visby, en UNESCO-världsarvsstad på Gotland, är känd för sin välbevarade medeltida ringmur, pittoreska gränder och ruiner. Under sommaren förvandlas staden när den årliga Medeltidsveckan äger rum.',
-      en: 'Visby, a UNESCO World Heritage city on Gotland, is known for its well-preserved medieval city wall, picturesque alleys, and ruins. During summer, the city transforms when the annual Medieval Week takes place.',
-    },
-    expenses: {
-      sv: '1200-2000 SEK per person/dag',
-      en: '1200-2000 SEK per person/day',
-    },
-    shopping: {
-      sv: 'Konsthantverk i kalksten, keramik, handgjorda smycken, lokala matprodukter som saffranspannkaka, och traditionella gotländska hantverk.',
-      en: 'Limestone crafts, ceramics, handmade jewelry, local food products like saffron pancake, and traditional Gotland crafts.',
-    },
-    whyVisit: {
-      sv: 'Visby är som en tidsresa till medeltiden med sin fantastiska stadsmur och smala kullerstensgator. Kombinationen av historia, vacker natur och strandliv gör Gotland till ett perfekt sommarresmål.',
-      en: 'Visby is like a time travel to the Middle Ages with its amazing city wall and narrow cobblestone streets. The combination of history, beautiful nature and beach life makes Gotland a perfect summer destination.',
-    },
+    id: 3,
+    name: "Malmö",
+    region: "Götaland",
+    description: "Located in southern Sweden, connected to Copenhagen, Denmark by the Öresund Bridge and known for its modern architecture.",
+    imageUrl: "https://images.unsplash.com/photo-1603070450407-1a9548e3df8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    attractions: ["Turning Torso", "Malmö Castle", "Folkets Park", "Malmö Live", "Ribersborg Beach"],
+    bestTimeToVisit: "May to September",
   },
   {
-    id: 'kebnekaise',
-    name: {
-      sv: 'Kebnekaise',
-      en: 'Kebnekaise',
-    },
-    location: {
-      sv: 'Kiruna',
-      en: 'Kiruna',
-    },
-    timeNeeded: {
-      hours: 0,
-      days: 4,
-    },
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800',
-    region: {
-      sv: 'Lappland',
-      en: 'Lapland',
-    },
-    description: {
-      sv: 'Kebnekaise är Sveriges högsta berg med sina 2096 meter över havet. Den erbjuder populära vandringsleder och bestigning för både nybörjare och erfarna bergsklättrare, med spektakulära vyer över glaciärer och den lappländska vildmarken.',
-      en: 'Kebnekaise is Sweden\'s highest mountain at 2096 meters above sea level. It offers popular hiking trails and ascents for both beginners and experienced mountain climbers, with spectacular views of glaciers and the Lapland wilderness.',
-    },
-    expenses: {
-      sv: '1500-3000 SEK per person/dag',
-      en: '1500-3000 SEK per person/day',
-    },
-    shopping: {
-      sv: 'Fjällutrustning, samiskt hantverk, överlevnadsverktyg, och lokala delikatesser som torkat renkött och hjortronsylt.',
-      en: 'Mountain equipment, Sami crafts, survival tools, and local delicacies such as dried reindeer meat and cloudberry jam.',
-    },
-    whyVisit: {
-      sv: 'Att bestiga Sveriges högsta berg är en mäktig upplevelse som erbjuder enastående naturupplevelser och en känsla av att ha uppnått något speciellt. Den orörda vildmarken, de fantastiska vyerna och den rena luften skapar minnen för livet.',
-      en: 'Climbing Sweden\'s highest mountain is a mighty experience that offers outstanding nature experiences and a feeling of having achieved something special. The untouched wilderness, the fantastic views and the clean air create memories for life.',
-    },
+    id: 4,
+    name: "Uppsala",
+    region: "Svealand",
+    description: "A university city with a rich history, beautiful cathedral, and vibrant student life.",
+    imageUrl: "https://images.unsplash.com/photo-1558697698-9300a84a6a99?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    attractions: ["Uppsala Cathedral", "Uppsala University", "Uppsala Castle", "Botanical Garden", "Gamla Uppsala"],
+    bestTimeToVisit: "May to September",
   },
   {
-    id: 'oresundsbron',
-    name: {
-      sv: 'Öresundsbron',
-      en: 'Øresund Bridge',
-    },
-    location: {
-      sv: 'Malmö',
-      en: 'Malmö',
-    },
-    timeNeeded: {
-      hours: 2,
-      days: 0,
-    },
-    image: 'https://images.unsplash.com/photo-1544085311-11a028465b03?auto=format&fit=crop&w=800',
-    region: {
-      sv: 'Skåne län',
-      en: 'Skåne County',
-    },
-    description: {
-      sv: 'Öresundsbron är en 16 km lång förbindelse mellan Sverige och Danmark. Denna tekniska bedrift kombinerar en bro och en tunnel och erbjuder besökare möjligheten att bokstavligen stå med ena foten i Sverige och den andra i Danmark.',
-      en: 'The Øresund Bridge is a 16 km connection between Sweden and Denmark. This technical achievement combines a bridge and a tunnel and offers visitors the opportunity to literally stand with one foot in Sweden and the other in Denmark.',
-    },
-    expenses: {
-      sv: '300-500 SEK per person',
-      en: '300-500 SEK per person',
-    },
-    shopping: {
-      sv: 'Miniatyrer av bron, lokala skånska specialiteter, och skandinavisk design från både svenska och danska designers.',
-      en: 'Miniatures of the bridge, local Skåne specialties, and Scandinavian design from both Swedish and Danish designers.',
-    },
-    whyVisit: {
-      sv: 'Öresundsbron är en mäktig symbol för samarbetet mellan Sverige och Danmark, samtidigt som den är en imponerande teknisk konstruktion. Ett besök här ger fantastisk utsikt över Öresund och möjlighet att uppleva två länder på en och samma dag.',
-      en: 'The Øresund Bridge is a powerful symbol of cooperation between Sweden and Denmark, while being an impressive technical construction. A visit here provides fantastic views of Öresund and the opportunity to experience two countries in one day.',
-    },
+    id: 5,
+    name: "Kiruna",
+    region: "Norrland",
+    description: "Sweden's northernmost city, known for the Northern Lights, midnight sun, and the famous Ice Hotel.",
+    imageUrl: "https://images.unsplash.com/photo-1613507093663-170d82b3460a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+    attractions: ["Ice Hotel", "Abisko National Park", "Northern Lights", "Kebnekaise Mountain", "Kiruna Church"],
+    bestTimeToVisit: "December to March for Northern Lights, June for Midnight Sun",
   },
+  {
+    id: 6,
+    name: "Visby",
+    region: "Götaland",
+    description: "A UNESCO World Heritage site on Gotland island with well-preserved medieval city walls and buildings.",
+    imageUrl: "https://images.unsplash.com/photo-1662421387484-94f2821a8ecc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    attractions: ["Visby City Wall", "Gotland Museum", "St. Mary's Cathedral", "Almedalen Park", "Botanical Garden"],
+    bestTimeToVisit: "June to August",
+  },
+  {
+    id: 7,
+    name: "Åre",
+    region: "Norrland",
+    description: "Sweden's premier ski resort with beautiful mountain scenery and outdoor activities all year round.",
+    imageUrl: "https://images.unsplash.com/photo-1607490040458-65a49073f5d2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    attractions: ["Åre Ski Resort", "Åreskutan Mountain", "Tännforsen Waterfall", "Zipline Adventures", "Mountain Biking Trails"],
+    bestTimeToVisit: "December to April for skiing, June to August for summer activities",
+  },
+  {
+    id: 8,
+    name: "Lund",
+    region: "Götaland",
+    description: "A charming university town with cobblestone streets, historic buildings, and a vibrant academic atmosphere.",
+    imageUrl: "https://images.unsplash.com/photo-1630649984885-be4a38c41b9e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    attractions: ["Lund Cathedral", "Lund University", "Botanical Garden", "Kulturen Open-Air Museum", "Skissernas Museum"],
+    bestTimeToVisit: "May to September",
+  },
+  {
+    id: 9,
+    name: "Öresund Bridge",
+    region: "Götaland",
+    description: "An engineering marvel connecting Sweden and Denmark across the Öresund Strait.",
+    imageUrl: "https://images.unsplash.com/photo-1549985798-6fc5211aaff8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    attractions: ["Bridge Experience Center", "Lernacken Viewpoint", "Malmö-Copenhagen Connection"],
+    bestTimeToVisit: "Year-round",
+  },
+  {
+    id: 10,
+    name: "Gamla Stan",
+    region: "Svealand",
+    description: "The historic old town of Stockholm with medieval streets, colorful buildings, and historic landmarks.",
+    imageUrl: "https://images.unsplash.com/photo-1552750069-a412269e2f55?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+    attractions: ["Royal Palace", "Stockholm Cathedral", "Nobel Museum", "Stortorget Square", "Mårten Trotzigs Gränd"],
+    bestTimeToVisit: "May to September",
+  }
 ];
-
-export default destinations;

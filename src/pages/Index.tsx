@@ -1,123 +1,84 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Button } from '@/components/ui/button';
-import DestinationCard from '@/components/DestinationCard';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import destinations from '@/data/destinations';
-import { ArrowRight, MapPin } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Card, CardContent } from '../components/ui/card';
+import DestinationCard from '../components/DestinationCard';
+import { destinations } from '../data/destinations';
+import WorldTimeClock from '../components/WorldTimeClock';
+import ContactForm from '../components/ContactForm';
+import { Toaster } from '../components/ui/toaster';
 
 const Index = () => {
-  const { t, language } = useLanguage();
   const featuredDestinations = destinations.slice(0, 3);
+  const fallbackHeroImage = 'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80';
   
-  // Higher quality fallback image
-  const fallbackImage = "/lovable-uploads/44886815-5832-4fe1-9040-b02219f98d4e.png";
+  const heroBgStyle = {
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${fallbackHeroImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-grow">
-        {/* Hero Section - Using a more reliable image with local fallback */}
-        <section 
-          className="hero-section bg-cover bg-center relative h-[60vh] flex items-center justify-center" 
-          style={{ 
-            backgroundImage: `url(${fallbackImage})`,
-            backgroundColor: '#4a5568' // Backup background color if image fails
-          }}
-        >
-          <div className="absolute inset-0 bg-black/50"></div>
-          <div className="relative z-10 text-center text-white px-4 max-w-3xl">
-            <h1 className="text-3xl md:text-5xl font-bold mb-4">
-              {t('home.hero.title')}
-            </h1>
-            <p className="text-lg mb-8">
-              {t('home.hero.subtitle')}
-            </p>
-            <Link to="/destinations">
-              <Button className="bg-earth-forest hover:bg-earth-moss transition-colors">
-                {t('home.explore.button')}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+    <div className="space-y-12">
+      {/* Hero Section */}
+      <div className="w-full py-24 px-4 sm:px-6" style={heroBgStyle}>
+        <div className="max-w-5xl mx-auto text-center text-white">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
+            Discover the Beauty of Sweden
+          </h1>
+          <p className="text-xl mb-8">
+            Explore the rich culture, breathtaking landscapes, and unique experiences that Sweden has to offer.
+          </p>
+          <div className="flex justify-center gap-4 flex-wrap">
+            <Button asChild size="lg">
+              <Link to="/destinations">Explore Destinations</Link>
+            </Button>
+            <Button variant="outline" size="lg">
+              <a href="#contact">Contact an Agent</a>
+            </Button>
           </div>
-        </section>
-        
-        {/* Featured Destinations Section */}
-        <section className="py-16 px-4 bg-muted/30">
-          <div className="container mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-              {t('home.featured.title')}
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredDestinations.map((destination) => (
-                <DestinationCard 
-                  key={destination.id} 
-                  destination={destination} 
-                />
-              ))}
-            </div>
-            
-            <div className="text-center mt-12">
-              <Link to="/destinations">
-                <Button variant="outline" className="border-earth-forest text-earth-forest hover:bg-earth-forest hover:text-white">
-                  {language === 'sv' ? 'Se alla resmål' : 'View all destinations'}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
+        </div>
+      </div>
+
+      {/* Featured Destinations Section */}
+      <section className="px-4 sm:px-6">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-6 text-center">Featured Destinations</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredDestinations.map((destination) => (
+              <DestinationCard key={destination.id} destination={destination} />
+            ))}
           </div>
-        </section>
-        
-        {/* Regions Section - Using local reliable images */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
-              {language === 'sv' ? 'Utforska efter region' : 'Explore by region'}
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { id: 'norrland', name: { sv: 'Norrland', en: 'Northern Sweden' }, image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800' },
-                { id: 'svealand', name: { sv: 'Svealand', en: 'Central Sweden' }, image: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=800' },
-                { id: 'gotaland', name: { sv: 'Götaland', en: 'Southern Sweden' }, image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800' },
-              ].map((region) => (
-                <div key={region.id} className="relative overflow-hidden rounded-lg group h-60">
-                  <img 
-                    src={region.image} 
-                    alt={region.name[language]} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      if (target.src !== fallbackImage) {
-                        console.log(`Region image failed to load: ${region.name[language]}`);
-                        target.src = fallbackImage;
-                        // Add a class to indicate the image has fallen back
-                        target.classList.add('fallback-image');
-                      }
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <div className="text-center">
-                      <h3 className="text-white text-xl font-bold">{region.name[language]}</h3>
-                      <Link to={`/region/${region.id}`} className="inline-flex items-center text-white/90 hover:text-white mt-2">
-                        <MapPin className="mr-1 h-4 w-4" />
-                        <span>{language === 'sv' ? 'Upptäck platser' : 'Discover places'}</span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="text-center mt-8">
+            <Button asChild>
+              <Link to="/destinations">View All Destinations</Link>
+            </Button>
           </div>
-        </section>
-      </main>
-      
-      <Footer />
+        </div>
+      </section>
+
+      {/* World Time Section */}
+      <section className="px-4 sm:px-6 py-8 bg-slate-100">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold mb-6 text-center">Local Time</h2>
+          <Card>
+            <CardContent className="pt-6">
+              <WorldTimeClock />
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="px-4 sm:px-6 py-8">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold mb-6 text-center">Get in Touch</h2>
+          <ContactForm />
+        </div>
+      </section>
+
+      <Toaster />
     </div>
   );
 };
