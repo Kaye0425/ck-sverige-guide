@@ -12,6 +12,9 @@ import { ArrowRight, MapPin } from 'lucide-react';
 const Index = () => {
   const { t, language } = useLanguage();
   const featuredDestinations = destinations.slice(0, 3);
+  
+  // Fallback image in case an image fails to load
+  const fallbackImage = "https://images.unsplash.com/photo-1576744822484-c5a6b149fb36?auto=format&fit=crop&w=800";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -19,9 +22,14 @@ const Index = () => {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="hero-section bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1501804091302-b174a0b3e116?auto=format&fit=crop&w=1500)' }}>
-          <div className="hero-overlay"></div>
-          <div className="hero-content">
+        <section 
+          className="hero-section bg-cover bg-center relative h-[60vh] flex items-center justify-center" 
+          style={{ 
+            backgroundImage: 'url(https://images.unsplash.com/photo-1501804091302-b174a0b3e116?auto=format&fit=crop&w=1500)' 
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="relative z-10 text-center text-white px-4 max-w-3xl">
             <h1 className="text-3xl md:text-5xl font-bold mb-4">
               {t('home.hero.title')}
             </h1>
@@ -82,6 +90,12 @@ const Index = () => {
                     src={region.image} 
                     alt={region.name[language]} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (target.src !== fallbackImage) {
+                        target.src = fallbackImage;
+                      }
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <div className="text-center">

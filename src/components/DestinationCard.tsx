@@ -70,13 +70,23 @@ const DestinationCard: React.FC<DestinationCardProps> = ({ destination }) => {
     window.speechSynthesis.speak(utterance);
   };
 
+  // Fallback image in case the destination image is missing or fails to load
+  const fallbackImage = "https://images.unsplash.com/photo-1576744822484-c5a6b149fb36?auto=format&fit=crop&w=800";
+
   return (
     <Link to={`/destination/${destination.id}`} className="destination-card block hover:scale-[1.02] transition-all">
       <div className="relative rounded-t-lg overflow-hidden">
         <img
-          src={destination.image}
+          src={destination.image || fallbackImage}
           alt={destination.name[language]}
           className="destination-card-image object-cover w-full h-52 hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== fallbackImage) {
+              target.src = fallbackImage;
+              console.log(`Image failed to load, using fallback for: ${destination.name[language]}`);
+            }
+          }}
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
           <div className="flex items-center gap-2">
