@@ -27,6 +27,9 @@ const Destinations = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [normalizedSearchTerm, setNormalizedSearchTerm] = useState('');
   
+  // Fallback image in case the destination image is missing or fails to load
+  const fallbackImage = "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=800";
+  
   // Update normalized search term when search term changes
   useEffect(() => {
     setNormalizedSearchTerm(normalizeText(searchTerm));

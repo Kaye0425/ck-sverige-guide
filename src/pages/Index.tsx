@@ -14,7 +14,7 @@ const Index = () => {
   const featuredDestinations = destinations.slice(0, 3);
   
   // Fallback image in case an image fails to load
-  const fallbackImage = "https://images.unsplash.com/photo-1576744822484-c5a6b149fb36?auto=format&fit=crop&w=800";
+  const fallbackImage = "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -25,7 +25,7 @@ const Index = () => {
         <section 
           className="hero-section bg-cover bg-center relative h-[60vh] flex items-center justify-center" 
           style={{ 
-            backgroundImage: 'url(https://images.unsplash.com/photo-1501804091302-b174a0b3e116?auto=format&fit=crop&w=1500)' 
+            backgroundImage: 'url(https://images.unsplash.com/photo-1603015255344-da0ec1a8f9a4?auto=format&fit=crop&w=1500)' 
           }}
         >
           <div className="absolute inset-0 bg-black/50"></div>
@@ -81,9 +81,9 @@ const Index = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { id: 'norrland', name: { sv: 'Norrland', en: 'Northern Sweden' }, image: 'https://images.unsplash.com/photo-1557546607-59c6989579d4?auto=format&fit=crop&w=400' },
-                { id: 'svealand', name: { sv: 'Svealand', en: 'Central Sweden' }, image: 'https://images.unsplash.com/photo-1572973843894-825e041604d8?auto=format&fit=crop&w=400' },
-                { id: 'gotaland', name: { sv: 'Götaland', en: 'Southern Sweden' }, image: 'https://images.unsplash.com/photo-1573799792866-3cfc308652dd?auto=format&fit=crop&w=400' },
+                { id: 'norrland', name: { sv: 'Norrland', en: 'Northern Sweden' }, image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800' },
+                { id: 'svealand', name: { sv: 'Svealand', en: 'Central Sweden' }, image: 'https://images.unsplash.com/photo-1515859005217-8a1f08870f59?auto=format&fit=crop&w=800' },
+                { id: 'gotaland', name: { sv: 'Götaland', en: 'Southern Sweden' }, image: 'https://images.unsplash.com/photo-1601882046316-e873ebf78b6e?auto=format&fit=crop&w=800' },
               ].map((region) => (
                 <div key={region.id} className="relative overflow-hidden rounded-lg group h-60">
                   <img 
