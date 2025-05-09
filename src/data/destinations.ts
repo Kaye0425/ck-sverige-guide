@@ -1,4 +1,3 @@
-
 import { Destination } from '@/components/DestinationCard';
 
 const destinations: Destination[] = [
@@ -16,7 +15,7 @@ const destinations: Destination[] = [
       hours: 4,
       days: 0,
     },
-    image: 'https://images.unsplash.com/photo-1582651549911-6bd4bf35e9fb?auto=format&fit=crop&w=800',
+    image: 'https://images.unsplash.com/photo-1526322024902-60ae8fc9557e?auto=format&fit=crop&w=800',
     region: {
       sv: 'Stockholms län',
       en: 'Stockholm County',
@@ -52,7 +51,7 @@ const destinations: Destination[] = [
       hours: 0,
       days: 2,
     },
-    image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800',
+    image: 'https://images.unsplash.com/photo-1517299321609-52687d1bc55a?auto=format&fit=crop&w=800',
     region: {
       sv: 'Lappland',
       en: 'Lapland',
@@ -88,7 +87,7 @@ const destinations: Destination[] = [
       hours: 0,
       days: 3,
     },
-    image: 'https://images.unsplash.com/photo-1601882559101-64834e884cbe?auto=format&fit=crop&w=800',
+    image: 'https://images.unsplash.com/photo-1592248939070-2f13d17df027?auto=format&fit=crop&w=800',
     region: {
       sv: 'Gotlands län',
       en: 'Gotland County',
@@ -124,7 +123,7 @@ const destinations: Destination[] = [
       hours: 0,
       days: 4,
     },
-    image: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=800',
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800',
     region: {
       sv: 'Lappland',
       en: 'Lapland',
@@ -160,7 +159,7 @@ const destinations: Destination[] = [
       hours: 2,
       days: 0,
     },
-    image: 'https://images.unsplash.com/photo-1549661633-64e5d14bbc42?auto=format&fit=crop&w=800',
+    image: 'https://images.unsplash.com/photo-1544085311-11a028465b03?auto=format&fit=crop&w=800',
     region: {
       sv: 'Skåne län',
       en: 'Skåne County',

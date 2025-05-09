@@ -13,19 +13,20 @@ const Index = () => {
   const { t, language } = useLanguage();
   const featuredDestinations = destinations.slice(0, 3);
   
-  // Fallback image in case an image fails to load
-  const fallbackImage = "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800";
+  // Higher quality fallback image
+  const fallbackImage = "/lovable-uploads/44886815-5832-4fe1-9040-b02219f98d4e.png";
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section */}
+        {/* Hero Section - Using a more reliable image with local fallback */}
         <section 
           className="hero-section bg-cover bg-center relative h-[60vh] flex items-center justify-center" 
           style={{ 
-            backgroundImage: 'url(https://images.unsplash.com/photo-1603015255344-da0ec1a8f9a4?auto=format&fit=crop&w=1500)' 
+            backgroundImage: `url(${fallbackImage})`,
+            backgroundColor: '#4a5568' // Backup background color if image fails
           }}
         >
           <div className="absolute inset-0 bg-black/50"></div>
@@ -72,7 +73,7 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Regions Section */}
+        {/* Regions Section - Using local reliable images */}
         <section className="py-16 px-4">
           <div className="container mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">
@@ -81,9 +82,9 @@ const Index = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { id: 'norrland', name: { sv: 'Norrland', en: 'Northern Sweden' }, image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=800' },
-                { id: 'svealand', name: { sv: 'Svealand', en: 'Central Sweden' }, image: 'https://images.unsplash.com/photo-1515859005217-8a1f08870f59?auto=format&fit=crop&w=800' },
-                { id: 'gotaland', name: { sv: 'Götaland', en: 'Southern Sweden' }, image: 'https://images.unsplash.com/photo-1601882046316-e873ebf78b6e?auto=format&fit=crop&w=800' },
+                { id: 'norrland', name: { sv: 'Norrland', en: 'Northern Sweden' }, image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800' },
+                { id: 'svealand', name: { sv: 'Svealand', en: 'Central Sweden' }, image: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?auto=format&fit=crop&w=800' },
+                { id: 'gotaland', name: { sv: 'Götaland', en: 'Southern Sweden' }, image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800' },
               ].map((region) => (
                 <div key={region.id} className="relative overflow-hidden rounded-lg group h-60">
                   <img 
@@ -93,7 +94,10 @@ const Index = () => {
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       if (target.src !== fallbackImage) {
+                        console.log(`Region image failed to load: ${region.name[language]}`);
                         target.src = fallbackImage;
+                        // Add a class to indicate the image has fallen back
+                        target.classList.add('fallback-image');
                       }
                     }}
                   />
