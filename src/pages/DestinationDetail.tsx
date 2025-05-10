@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -5,7 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ArrowLeft, Clock, Euro, MapPin, ShoppingCart, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import destinations from '@/data/destinations';
+import { destinations } from '@/data/destinations';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   DropdownMenu,

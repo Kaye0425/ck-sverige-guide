@@ -4,7 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import DestinationCard from '@/components/DestinationCard';
-import destinations from '@/data/destinations';
+import { destinations } from '@/data/destinations';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -69,7 +69,7 @@ const Destinations = () => {
       
       // Take top 3 unique suggestions
       const uniqueSuggestions = Array.from(new Set(possibleMatches)).slice(0, 3);
-      setSuggestions(uniqueSuggestions);
+      setSuggestions(uniqueSuggestions as string[]); // Fix for the TS2345 error
       setShowSuggestions(uniqueSuggestions.length > 0);
     } else {
       setShowSuggestions(false);
