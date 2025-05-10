@@ -46,6 +46,12 @@ const ChatBot = () => {
     }
   };
 
+  // Get translated strings with fallbacks
+  const chatTitle = typeof t('chatbot.title') === 'string' ? t('chatbot.title') : 'Travel Assistant';
+  const chatPlaceholder = typeof t('chatbot.placeholder') === 'string' ? t('chatbot.placeholder') : 'Type your message...';
+  const sendButtonText = typeof t('chatbot.send') === 'string' ? t('chatbot.send') : 'Send';
+  const openChatText = typeof t('chatbot.open') === 'string' ? t('chatbot.open') : 'Open chat';
+
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Chat Interface */}
@@ -53,7 +59,7 @@ const ChatBot = () => {
         <div className="w-96 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-96">
           {/* Chat Header */}
           <div className="bg-earth-forest text-white p-4 flex items-center justify-between">
-            <span className="font-bold">{t('chatbot.title') || 'Travel Assistant'}</span>
+            <span className="font-bold">{chatTitle}</span>
             <Button 
               variant="ghost" 
               size="icon" 
@@ -84,7 +90,7 @@ const ChatBot = () => {
                 value={inputValue}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyPress}
-                placeholder={t('chatbot.placeholder') || 'Type your message...'}
+                placeholder={chatPlaceholder}
                 className="flex-grow mr-2 rounded-md border-gray-300 focus:border-earth-forest focus:ring-earth-forest"
                 rows={1}
               />
@@ -94,7 +100,7 @@ const ChatBot = () => {
                 aria-label="Send message"
               >
                 <Send className="h-4 w-4 mr-2" />
-                <span>{t('chatbot.send') || 'Send'}</span>
+                <span>{sendButtonText}</span>
               </Button>
             </div>
           </div>
@@ -106,7 +112,7 @@ const ChatBot = () => {
         variant="outline" 
         onClick={toggleChat} 
         className="rounded-full w-14 h-14 flex items-center justify-center shadow-md bg-white hover:bg-gray-100"
-        aria-label={t('chatbot.open') || 'Open chat'}
+        aria-label={openChatText}
       >
         <MessageSquare className="h-6 w-6" />
       </Button>
