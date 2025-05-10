@@ -46,6 +46,7 @@ export const useChatBot = () => {
 
   return {
     messages,
+    setMessages,
     inputValue,
     handleInputChange,
     handleSendMessage,
