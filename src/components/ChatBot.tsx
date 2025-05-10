@@ -54,7 +54,13 @@ const ChatBot = () => {
           {/* Chat Header */}
           <div className="bg-earth-forest text-white p-4 flex items-center justify-between">
             <span className="font-bold">{t('chatbot.title') || 'Travel Assistant'}</span>
-            <Button variant="ghost" size="icon" onClick={toggleChat} className="text-white hover:text-gray-200">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleChat} 
+              className="text-white hover:text-gray-200"
+              aria-label="Close chat"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -82,9 +88,13 @@ const ChatBot = () => {
                 className="flex-grow mr-2 rounded-md border-gray-300 focus:border-earth-forest focus:ring-earth-forest"
                 rows={1}
               />
-              <Button onClick={handleSendMessage} variant="secondary">
+              <Button 
+                onClick={handleSendMessage} 
+                variant="secondary"
+                aria-label="Send message"
+              >
                 <Send className="h-4 w-4 mr-2" />
-                {t('chatbot.send') || 'Send'}
+                <span>{t('chatbot.send') || 'Send'}</span>
               </Button>
             </div>
           </div>
@@ -96,9 +106,9 @@ const ChatBot = () => {
         variant="outline" 
         onClick={toggleChat} 
         className="rounded-full w-14 h-14 flex items-center justify-center shadow-md bg-white hover:bg-gray-100"
+        aria-label={t('chatbot.open') || 'Open chat'}
       >
         <MessageSquare className="h-6 w-6" />
-        <span className="sr-only">{t('chatbot.open') || 'Open chat'}</span>
       </Button>
     </div>
   );
