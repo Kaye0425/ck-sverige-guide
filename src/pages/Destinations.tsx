@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Header from '@/components/Header';
@@ -69,7 +68,7 @@ const Destinations = () => {
       
       // Take top 3 unique suggestions
       const uniqueSuggestions = Array.from(new Set(possibleMatches)).slice(0, 3);
-      setSuggestions(uniqueSuggestions as string[]); // Fix for the TS2345 error
+      setSuggestions(uniqueSuggestions as string[]); 
       setShowSuggestions(uniqueSuggestions.length > 0);
     } else {
       setShowSuggestions(false);

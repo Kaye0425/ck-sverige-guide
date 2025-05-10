@@ -46,7 +46,7 @@ const DestinationDetail = () => {
   const [selectedCurrency, setSelectedCurrency] = useState('EUR');
   const [showWorldClock, setShowWorldClock] = useState(false);
   
-  const destination = destinations.find(d => d.id === id);
+  const destination = destinations.find(d => String(d.id) === id);
   
   useEffect(() => {
     if (!destination) {
