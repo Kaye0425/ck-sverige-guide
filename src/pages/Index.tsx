@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Header from '../components/Header';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import DestinationCard from '../components/DestinationCard';
@@ -23,6 +24,9 @@ const Index = () => {
 
   return (
     <div className="space-y-12 min-h-screen flex flex-col relative">
+      {/* Navigation Bar */}
+      <Header />
+
       {/* Floating World Clock on left, on hover */}
       <div
         className="fixed left-0 top-0 bottom-0 z-50"
