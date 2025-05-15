@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type Language = 'sv' | 'en';
@@ -78,6 +77,24 @@ const translations = {
   'destination.days': {
     sv: 'dagar',
     en: 'days',
+  },
+  
+  // Chatbot translations
+  'chatbot.title': {
+    sv: 'Reseassistent',
+    en: 'Travel Assistant',
+  },
+  'chatbot.placeholder': {
+    sv: 'Skriv ditt meddelande...',
+    en: 'Type your message...',
+  },
+  'chatbot.send': {
+    sv: 'Skicka',
+    en: 'Send',
+  },
+  'chatbot.open': {
+    sv: 'Öppna chatt',
+    en: 'Open chat',
   },
 };
 
