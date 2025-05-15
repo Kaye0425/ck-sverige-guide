@@ -108,14 +108,17 @@ const ChatBot = () => {
       )}
 
       {/* Chat Button */}
-      <Button 
-        variant="outline" 
-        onClick={toggleChat} 
-        className="rounded-full w-14 h-14 flex items-center justify-center shadow-md bg-white hover:bg-gray-100"
-        aria-label={openChatText}
-      >
-        <MessageSquare className="h-6 w-6" />
-      </Button>
+      {/* Hide the chat button when isOpen */}
+      {!isOpen && (
+        <Button 
+          variant="outline" 
+          onClick={toggleChat} 
+          className="rounded-full w-14 h-14 flex items-center justify-center shadow-md bg-white hover:bg-gray-100"
+          aria-label={openChatText}
+        >
+          <MessageSquare className="h-6 w-6" />
+        </Button>
+      )}
     </div>
   );
 };

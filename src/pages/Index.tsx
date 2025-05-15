@@ -1,26 +1,43 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import DestinationCard from '../components/DestinationCard';
 import { destinations } from '../data/destinations';
 import WorldTimeClock from '../components/WorldTimeClock';
-import ContactForm from '../components/ContactForm';
 import { Toaster } from '../components/ui/toaster';
 
 const Index = () => {
   const featuredDestinations = destinations.slice(0, 3);
   const fallbackHeroImage = 'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80';
-  
+
   const heroBgStyle = {
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${fallbackHeroImage})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   };
 
+  // For WorldClock hover sidebar on HOME page:
+  const [showWorldClock, setShowWorldClock] = useState(false);
+
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 min-h-screen flex flex-col relative">
+      {/* Floating World Clock on left, on hover */}
+      <div
+        className="fixed left-0 top-0 bottom-0 z-50"
+        onMouseEnter={() => setShowWorldClock(true)}
+        onMouseLeave={() => setShowWorldClock(false)}
+      >
+        <div className={`transition-all duration-300 h-full ${showWorldClock ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-full'}`}>
+          <WorldTimeClock />
+        </div>
+        {/* Hover tab for the clock */}
+        <div className="absolute top-1/2 -translate-y-1/2 left-0 bg-earth-forest text-white p-2 rounded-r-md cursor-pointer shadow-md">
+          <span className="font-bold">🕒</span>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="w-full py-24 px-4 sm:px-6" style={heroBgStyle}>
         <div className="max-w-5xl mx-auto text-center text-white">
@@ -58,26 +75,9 @@ const Index = () => {
         </div>
       </section>
 
-      {/* World Time Section */}
-      <section className="px-4 sm:px-6 py-8 bg-slate-100">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-6 text-center">Local Time</h2>
-          <Card>
-            <CardContent className="pt-6">
-              <WorldTimeClock />
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="px-4 sm:px-6 py-8">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-6 text-center">Get in Touch</h2>
-          <ContactForm />
-        </div>
-      </section>
-
+      {/* REMOVE: World Time Section - replaced by floating clock */}
+      {/* REMOVE: "Get in Touch" Contact Section */}
+      
       <Toaster />
     </div>
   );
